@@ -17,7 +17,7 @@ const signToken = (id) => {
 //@desc user registration
     exports.createUser = catchAsync(async (req, res, next) => {
         const newUser = await User.create({
-        userName:req.body.userName,
+        organisationUserName:req.body.organisationUserName,
         email: req.body.email,
         password: req.body.password,
         confirmPassword: req.body.confirmPassword,
