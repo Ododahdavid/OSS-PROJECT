@@ -11,12 +11,12 @@ const projectSchema=mongoose.Schema({
     owner:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
-        required:[true,'Enter your project owner']
+        // required:[true,'Enter your project owner']
     },
     visibility:{
         type:String,
         enum:['public', 'private'],
-        default:public
+        default:'public'
     },
     documents:{
         type:mongoose.Schema.Types.ObjectId,
@@ -33,4 +33,5 @@ const projectSchema=mongoose.Schema({
     tags:[String]
 })
 projectSchema.index({title:'text',tags:'text'})
-module.exports=mongoose.model('Project',projectSchema)
+const Project=mongoose.model('Project',projectSchema)
+module.exports = Project

@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const globalErrorHandler = require('./Controller/errorController')
 const authRoutes = require('./Routes/authRoutes');
-
+const projectRoutes = require('./Routes/projectRoutes');
 const app = express();
 app.use(express.json());
 
@@ -19,6 +19,7 @@ app.get('/', (req, res, next) => {
     res.send('<h1>OSS-Project</h1>');
 });
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/projects',projectRoutes);
 
 
 
