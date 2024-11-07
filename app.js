@@ -4,6 +4,7 @@ dotenv.config();
 const globalErrorHandler = require('./Controller/errorController')
 const authRoutes = require('./Routes/authRoutes');
 const projectRoutes = require('./Routes/projectRoutes');
+const docRoutes=require('./Routes/documentRoutes');
 const app = express();
 app.use(express.json());
 
@@ -20,6 +21,7 @@ app.get('/', (req, res, next) => {
 });
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/projects',projectRoutes);
+app.use('/api/v1/document',docRoutes)
 
 
 
