@@ -5,6 +5,7 @@ const globalErrorHandler = require('./Controller/errorController')
 const authRoutes = require('./Routes/authRoutes');
 const projectRoutes = require('./Routes/projectRoutes');
 const docRoutes=require('./Routes/documentRoutes');
+const pageRoutes=require('./Routes/pageRoutes');
 const app = express();
 app.use(express.json());
 
@@ -22,6 +23,7 @@ app.get('/', (req, res, next) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/projects',projectRoutes);
 app.use('/api/v1/document',docRoutes)
+app.use('/api/v1/pages',pageRoutes);
 
 
 

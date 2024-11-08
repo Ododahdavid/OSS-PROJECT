@@ -15,21 +15,24 @@ const signToken = (id) => {
 
 
 //@desc user registration
-    exports.createUser = catchAsync(async (req, res, next) => {
+exports.createUser = catchAsync(async (req, res, next) => {
         const newUser = await User.create({
-        organisationUserName:req.body.organisationUserName,
-        email: req.body.email,
-        password: req.body.password,
-        confirmPassword: req.body.confirmPassword,
-        role: req.body.role,
+            userName: req.body.userName, // Ensure userName is included if it's required
+            organisationUserName: req.body.organisationUserName,
+            email: req.body.email,
+            password: req.body.password,
+            confirmPassword: req.body.confirmPassword,
+            role: req.body.role,
         });
+
         const token = signToken(newUser._id);
         res.status(201).json({
-        status: 'success',
-        token,
-        data: newUser,
+            status: 'success',
+            token,
+            data: newUser,
         });
     });
+
     
     // @desc user login
     exports.login = catchAsync(async (req, res, next) => {
