@@ -4,13 +4,14 @@ const { StatusCodes } = require('http-status-codes');
 
 // 1. Create a New Document
 exports.createDocument = catchAsync(async (req, res) => {
-    const { title, author, project, isDraft } = req.body;
+    const { title, author, project, isDraft,content } = req.body;
 
     const document = await Document.create({
         title,
         author,
         project,
-        isDraft
+        isDraft,
+        content
     });
 
     res.status(StatusCodes.CREATED).json({
