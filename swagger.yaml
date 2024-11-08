@@ -1,0 +1,376 @@
+openapi: 3.0.0
+info:
+  title: OSS Project API
+  description: API documentation for the OSS Project, including authentication, project management, document, and page management.
+  version: '1.0'
+
+servers:
+  - url: https://oss-project-api.onrender.com/api/v1
+    description: Production server
+  - url: http://localhost:3000/api/v1
+    description: Development server
+
+paths:
+  /auth/signup:
+    post:
+      tags:
+        - Authentication
+      summary: User Signup
+      operationId: signUp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+      responses:
+        '201':
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User Login
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token for authenticated access
+
+  /projects:
+    get:
+      tags:
+        - Project
+      summary: Get all projects
+      operationId: getAllProjects
+      responses:
+        '200':
+          description: List of all projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+
+    post:
+      tags:
+        - Project
+      summary: Create a new project
+      operationId: createProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        '201':
+          description: Project created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+  /projects/{projectId}:
+    get:
+      tags:
+        - Project
+      summary: Get project by ID
+      operationId: getProjectById
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+    patch:
+      tags:
+        - Project
+      summary: Update project by ID
+      operationId: updateProject
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectRequest'
+      responses:
+        '200':
+          description: Project updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+    delete:
+      tags:
+        - Project
+      summary: Delete project by ID
+      operationId: deleteProject
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Project deleted successfully
+
+  /documents:
+    get:
+      tags:
+        - Document
+      summary: Get all documents
+      operationId: getAllDocuments
+      responses:
+        '200':
+          description: List of all documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+
+    post:
+      tags:
+        - Document
+      summary: Create a new document
+      operationId: createDocument
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDocumentRequest'
+      responses:
+        '201':
+          description: Document created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+
+  /documents/{documentId}:
+    get:
+      tags:
+        - Document
+      summary: Get document by ID
+      operationId: getDocumentById
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Document details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+
+    patch:
+      tags:
+        - Document
+      summary: Update document by ID
+      operationId: updateDocument
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDocumentRequest'
+      responses:
+        '200':
+          description: Document updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+
+    delete:
+      tags:
+        - Document
+      summary: Delete document by ID
+      operationId: deleteDocument
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Document deleted successfully
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    SignUpRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+        - confirmPassword
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        confirmPassword:
+          type: string
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateProjectRequest:
+      type: object
+      required:
+        - title
+        - description
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+
+    UpdateProjectRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        project:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateDocumentRequest:
+      type: object
+      required:
+        - title
+        - content
+        - project
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        project:
+          type: string
+
+    UpdateDocumentRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        project:
+          type: string
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Authentication
+  - name: Project
+  - name: Document
