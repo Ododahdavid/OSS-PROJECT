@@ -1,0 +1,136 @@
+/* Header Container */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background-color: #1a1a1a; /* Dark background */
+    color: white;
+  }
+  
+  /* Logo and Product Name */
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo img {
+    height: 40px; /* Adjust based on logo size */
+    margin-right: 8px;
+  }
+  
+  .product-name {
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  /* Navigation Links */
+  .nav-links {
+    display: flex;
+    list-style: none;
+    gap: 24px;
+  }
+  
+  .nav-links a {
+    color: white;
+    text-decoration: none;
+    position: relative;
+  }
+  
+ 
+  
+  .dropdown-arrow {
+    margin-left: 4px;
+    font-size: 0.8em;
+    transition: transform 0.3s ease; /* Smooth rotation */
+  }
+  
+  /* Rotate the caret to point up when active */
+  .dropdown-arrow.active {
+    transform: rotate(180deg);
+  }
+  
+  
+  .dropdown-content h4 {
+    font-size: 1em;
+    color: #ddd;
+    margin-bottom: 8px;
+  }
+  
+  .dropdown-content ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .dropdown-content li {
+    color: #ccc;
+    margin-bottom: 4px;
+  }
+  
+  /* Authentication Buttons */
+  .auth-buttons .login-btn,
+  .auth-buttons .signup-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1em;
+    margin-left: 8px;
+  }
+  
+  .signup-btn {
+    background-color: #ffd700;
+    border-radius: 4px;
+    padding: 8px 12px;
+  }
+  
+  /* Navbar List Items */
+.nav-links li {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Dropdown Card */
+  .dropdown-card {
+    position: absolute;
+    top: 100%; /* Positions the card just below the navbar item */
+    left: 50%;
+    transform: translateX(-50%); /* Centers the card horizontally under the navbar item */
+    background-color: white;
+    padding: 1em;
+    color: black;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    min-width: 200px;
+    z-index: 10; /* Ensures it appears on top */
+    display: none; /* Hidden by default */
+    background-color: white; /* White background */
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 10px;
+    width: 200px; /* Adjust width as needed */
+  }
+  
+  /* Show dropdown on hover */
+  .nav-links li:hover .dropdown-card {
+    display: block;
+  }
+  
+
+  
+  .dropdown-item {
+    color: black; /* Black text color */
+    font-size: 1rem; /* Adjust font size */
+    font-weight: 500; /* Medium weight for emphasis */
+    padding: 8px 12px; /* Padding for spacing */
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f0f0f0; /* Light grey background on hover */
+    color: #333; /* Slightly darker color on hover */
+  }
+  

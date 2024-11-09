@@ -1,0 +1,60 @@
+.hero-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: #1b1f23; /* Dark background */
+    padding: 60px 20px;
+    color: white;
+  }
+  
+  .hero-logo {
+    width: 60px; /* Adjust size as needed */
+    height: auto;
+    margin-bottom: 20px;
+  }
+  
+  .hero-section h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 10px 0;
+  }
+  
+  .hero-section p {
+    font-size: 1rem;
+    color: #ccc; /* Light grey color */
+    max-width: 600px;
+    margin: 10px 0 30px;
+  }
+  
+  .hero-buttons {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .github-btn, .start-free-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .github-btn {
+    background-color: #444;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .start-free-btn {
+    background-color: #ffea6d;
+    color: black;
+  }
+  
+  .start-free-btn:hover, .github-btn:hover {
+    opacity: 0.9;
+  }
+  
