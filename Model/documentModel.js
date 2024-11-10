@@ -22,6 +22,18 @@ const documentSchema = new mongoose.Schema({
         }
             
     ],
+    image:{
+        type:Object,
+        default:null,
+        properties:{
+            public_id:{
+                type:String
+            },
+            url:{
+                type:String
+            }
+        }
+    },
     isDraft: {
         type: Boolean,
         default: true

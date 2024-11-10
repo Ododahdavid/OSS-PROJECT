@@ -1,7 +1,11 @@
 const Document = require('../Model/documentModel');
 const catchAsync = require('../utils/catchAsync');
 const { StatusCodes } = require('http-status-codes');
-
+// const cloudinary=require('cloudinary').v2
+const multer=require('multer')
+const fs=require('fs')
+const path=require('path')
+const cloudinary = require('../utils/cloudinaryConfig'); 
 // Helper function to create default document
 exports.createDefaultDocument = catchAsync(async (userId, projectId) => {
     const defaultDocument = await Document.create({
@@ -9,7 +13,7 @@ exports.createDefaultDocument = catchAsync(async (userId, projectId) => {
         author: userId,
         project: projectId,
         isDraft: true,
-        content: [
+        content: [  
             {
                 type: 'p',  // This matches the enum values in the schema (e.g., 'p' for paragraph)
                 content: 'Welcome to your first document!'  // This matches the required 'content' field
@@ -21,22 +25,41 @@ exports.createDefaultDocument = catchAsync(async (userId, projectId) => {
 
 
 // 1. Create a New Document
-exports.createDocument = catchAsync(async (req, res) => {
-    const { title, author, project, isDraft, content } = req.body;
+exports.createDocument = catchAsync(async (req, res, next) => {
+    const { title, author, project, isDraft, content, uploadType } = req.body;
+    let documentData = { title, author, project, isDraft, content };
 
-    const document = await Document.create({
-        title,
-        author,
-        project,
-        isDraft,
-        content
-    });
+    if (req.file) { // Check if an image is uploaded
+        if (uploadType === 'cloudinary') {
+            // Cloudinary image upload
+            const uploadResult = await cloudinary.uploader.upload_stream(
+                { folder: 'documents' },
+                (error, result) => {
+                    if (error) return next(new AppError('Failed to upload image', 500));
+                    documentData.image = { src: result.secure_url, public_id: result.public_id };
+                }
+            );
+            // Convert file buffer to readable stream for Cloudinary upload
+            const stream = cloudinary.uploader.upload_stream(uploadResult);
+            stream.end(req.file.buffer);
+        } else if (uploadType === 'local') {
+            // Local file system upload
+            const imagePath = `uploads/${Date.now()}-${req.file.originalname}`;
+            fs.writeFileSync(imagePath, req.file.buffer);
+            documentData.image = { src: `/${imagePath}` };
+        } else {
+            return next(new AppError('Invalid upload type', 400));
+        }
+    }
+
+    // Create the document with the image data
+    const document = await Document.create(documentData);
 
     res.status(StatusCodes.CREATED).json({
         status: 'success',
         data: {
-            document
-        }
+            document,
+        },
     });
 });
 
