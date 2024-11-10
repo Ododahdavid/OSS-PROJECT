@@ -17,16 +17,10 @@ const documentSchema = new mongoose.Schema({
     },
     content: [
         {
-            type: {
-                type: String,
-                enum: ['h1', 'h2', 'h3', 'p'], // Allowed types of content blocks
-                required: true
-            },
-            content: {
-                type: String,
-                required: true
-            }
+            type:String,
+            required: [true,'Enter content']
         }
+            
     ],
     isDraft: {
         type: Boolean,

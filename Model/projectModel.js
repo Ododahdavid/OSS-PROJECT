@@ -18,10 +18,10 @@ const projectSchema=mongoose.Schema({
         enum:['public', 'private'],
         default:'public'
     },
-    documents:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'Document',
-    },
+    documents: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Document',
+    }],
     createdAt:{
         type:Date,
         default:Date.now

@@ -10,6 +10,9 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const session = require('express-session');
+const passport = require('passport');
+
 
 // Custom Modules
 const globalErrorHandler = require('./Controller/errorController');
@@ -28,7 +31,14 @@ const swaggerDocument = YAML.load('./swagger.yaml');
 
 // Initialize Express app
 const app = express();
+app.use(session({
+    secret: 'your_session_secret_OSS_Project', // Use a secure secret
+    resave: false,
+    saveUninitialized: false
+}));
 
+app.use(passport.initialize());
+app.use(passport.session());
 // Set security HTTP headers
 app.use(helmet());
 

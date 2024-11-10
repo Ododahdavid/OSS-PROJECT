@@ -1,4 +1,6 @@
 const User = require('../Model/userModel.js');
+const Project = require('../Model/projectModel');
+const Document = require('../Model/documentModel');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const util = require('util');
@@ -6,32 +8,83 @@ const sendEmail = require('../utils/email');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { promisify } = require('util');
+const passport = require('passport');
+const GitHubStrategy = require('passport-github2').Strategy;
 
 const signToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
     });
     };
-
+// Helper function to create default document
+const createDefaultDocument = async (userId, projectId) => {
+    return await Document.create({
+        title: 'Untitled',
+        author: userId,
+        project: projectId,
+        isDraft: true,
+        content: 'Welcome to your first document!'
+    });
+};
 
 //@desc user registration
 exports.createUser = catchAsync(async (req, res, next) => {
+    try {
+        // Validate required fields
+        const { organisationName, userName, email, password, confirmPassword, role } = req.body;
+
+        if (!organisationName) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'organisationName is required'
+            });
+        }
+
+        // 1. Create a new user
         const newUser = await User.create({
-            userName: req.body.userName, // Ensure userName is included if it's required
-            organisationUserName: req.body.organisationUserName,
-            email: req.body.email,
-            password: req.body.password,
-            confirmPassword: req.body.confirmPassword,
-            role: req.body.role,
+            userName,
+            organisationName,
+            email,
+            password,
+            confirmPassword,
+            role,
         });
 
+        // 2. Create default project
+        const defaultProject = await Project.create({
+            title: 'My First Project',
+            description: 'Welcome to your first project! You can edit this description.',
+            visibility: 'private',
+            tags: ['getting-started'],
+            owner: newUser._id
+        });
+
+        // 3. Sign a JWT token for the new user
         const token = signToken(newUser._id);
+
+        // 4. Send response
         res.status(201).json({
             status: 'success',
             token,
             data: newUser,
+            project: defaultProject
         });
-    });
+
+    } catch (error) {
+        // Handle duplicate key error for organisationUserName or organisationName
+        if (error.code === 11000) {
+            const duplicateKey = error.keyPattern.organisationUserName ? 'organisationUserName' : 'organisationName';
+            const duplicateValue = error.keyValue[duplicateKey];
+            return res.status(400).json({
+                status: 'error',
+                message: `The ${duplicateKey} "${duplicateValue}" is already taken. Please choose another.`
+            });
+        }
+
+        // Pass other errors to the global error handler
+        next(error);
+    }
+});
 
     
     // @desc user login
@@ -157,3 +210,35 @@ exports.createUser = catchAsync(async (req, res, next) => {
         next();
         };
     };
+
+    passport.use(new GitHubStrategy({
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL: process.env.GITHUB_CALLBACK_URL
+    },
+    async (accessToken, refreshToken, profile, done) => {
+        try {
+            let user = await User.findOne({ githubId: profile.id });
+            if (!user) {
+                user = await User.create({
+                    githubId: profile.id,
+                    username: profile.username,
+                    email: profile.emails ? profile.emails[0].value : null,
+                    avatar: profile.photos ? profile.photos[0].value : null
+                });
+            }
+            done(null, user);
+        } catch (error) {
+            done(error, null);
+        }
+    }));
+    
+    passport.serializeUser((user, done) => {
+        done(null, user.id);
+    });
+    
+    passport.deserializeUser(async (id, done) => {
+        const user = await User.findById(id);
+        done(null, user);
+    });
+    

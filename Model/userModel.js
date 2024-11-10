@@ -12,14 +12,11 @@ const userSchema=new mongoose.Schema({
         lowercase:true,
         minlength: 3,
         maxlength: 20,
-    },
-    organisationUserName:{
-        type:String,
-        required:[true,'Enter Organization Name'],
-        unique:true,
-        lowercase:true,
-        minlength: 3,
-        maxlength: 20,
+    }, 
+    organisationName: {
+        type: String,
+        unique: true, // Enforces uniqueness
+        required: [true, 'Organisation username is required'] // Ensures it is always set
     },
     email:{
         type:String,
@@ -53,6 +50,10 @@ const userSchema=new mongoose.Schema({
         enum: ['user','admin'],
         default: 'user'
     },
+    githubId: String,
+    username: String,
+    email: String,
+    avatar: String,
     passwordChangedAt: Date,
     passwordResetOTP: String,
     passwordResetOTPExpires: Date,
