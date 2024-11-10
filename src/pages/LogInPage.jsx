@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import {Link as RouteLink} from "react-router-dom"
+import {Link as RouteLink, useNavigate} from "react-router-dom"
+import toast, { Toaster } from "react-hot-toast";
+
 const LogInPage = () => {
 
     // state to manage the values of the form inputs
@@ -8,6 +10,12 @@ const LogInPage = () => {
         password: ""
     })
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate()
+
+
+
+
     // function to manage the values of these inputs
     const handleInputValueChange = (event) => {
         event.preventDefault()
@@ -15,20 +23,77 @@ const LogInPage = () => {
         setloginFormData({ ...loginFormData, [name]: value })
     }
 
+    const submitLoginData = async (event) =>{
+        event.preventDefault()
+
+        setIsSubmitting(true)
+        try{
+
+            const response = await fetch('http://localhost:8000/api/v1/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: loginFormData.email,
+                    password: loginFormData.password,
+                }),
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                // alert('User registered successfully');
+                toast.success("Logged in Successfully", {
+                    style: {
+                      background: "rgb(144, 234, 96)",
+                    },
+                  });
+                  localStorage.setItem("user", JSON.stringify(result.data));
+                  console.log(result.data)
+                setTimeout(() => {
+                    navigate("/dashBoard")
+                }, 2000)
+
+                setloginFormData({
+                    email: '',
+                    password: ''
+                }
+                )
+                // Reset form or redirect to another page
+            } else {
+                // alert(`Error: ${result.message || 'Something went wrong'}`);
+                toast.error(`${result.message}`, {
+                    style: {
+                      background: "rgb(240, 139, 156)",
+                    },
+                  });
+            }
+
+        }
+        catch(err){
+            console.error('Error during registration:', err);
+            // alert('An error occurred. Please try again later.');
+            toast.error("Oops! something went wrong,  Please try again later", {
+                style: {
+                  background: "rgb(240, 139, 156)",
+                },
+              });
+        }
+    }
 
 
     return (
         <>
 
             <section className={"signUpPageContainer"}>
-                <form >
+                <form onSubmit={submitLoginData} >
                     <h1>Log In</h1>
                     <br />
                     <label>Email:</label>
                     <input name='email' value={loginFormData.email} onChange={handleInputValueChange} type="email" placeholder="Email" />
                     <br />
                     <label>Password:</label>
-                    <input type="password" placeholder="password" />
+                    <input type="password" placeholder="password" value={loginFormData.password} name='password' onChange={handleInputValueChange} />
                     <br />
                     <button type="submit">Log In</button>
                     <br />
@@ -51,6 +116,8 @@ const LogInPage = () => {
                     <br />
                     <p>Don't have an account?   <RouteLink to="/signUpPage" className="loginLink">SignUp</RouteLink></p>
                 </form>
+                <Toaster position="top-center" reverseOrder={false} />
+
             </section>
 
         </>

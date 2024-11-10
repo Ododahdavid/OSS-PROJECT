@@ -1,6 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const SideBar = () => {
+    const [userDetails, setUserDetails] = useState({
+        userName: "",
+        organisationUserName:"",
+        email: ""
+    })
     return (
         <>
 
