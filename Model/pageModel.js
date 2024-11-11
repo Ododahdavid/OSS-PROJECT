@@ -14,6 +14,10 @@ const PageSchema = new mongoose.Schema({
         ref: 'Document',
         required: true 
     },
+    image: {
+        src: String,
+        public_id: String,
+    },
     author: { 
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User' 

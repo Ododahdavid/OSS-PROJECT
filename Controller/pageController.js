@@ -1,24 +1,83 @@
     const Page = require('../Model/pageModel');
     const { StatusCodes } = require('http-status-codes');
     const catchAsync = require('../utils/catchAsync');
-
-    // Create a new page
+    const AppError=require('../utils/appError');
+    const cloudinary=require('cloudinary').v2
+    
+    const multer=require('multer')
+    const fs=require('fs')
+    const path=require('path')
+        // Create a new page
     exports.createPage = catchAsync(async (req, res, next) => {
-        const { title, content, document, author } = req.body;
+    const { title, content, document, author, uploadType } = req.body;
 
-        const newPage = await Page.create({
-            title,
-            content,
-            document,
-            author
-        });
+    // Clean up the document and author IDs to avoid trailing spaces or commas
+    const cleanDocument = document ? document.trim().replace(/,$/, '') : null;
+    const cleanAuthor = author ? author.trim().replace(/,$/, '') : null;
 
-        res.status(StatusCodes.CREATED).json({
-            status: 'success',
-            data: newPage
-        });
+    let pageData = {
+        title,
+        content,
+        document: cleanDocument,
+        author: cleanAuthor,
+    };
+
+    // Image upload handling
+    if (req.files && req.files.image) {
+        const imageFile = req.files.image;
+
+        // Validate the image file
+        if (!imageFile.mimetype.startsWith('image')) {
+        return next(new AppError('Please upload an image file', 400));
+        }
+        const maxSize = 5 * 1024 * 1024; // 5 MB
+        if (imageFile.size > maxSize) {
+        return next(new AppError('Image size should be less than 5MB', 400));
+        }
+
+        // Handle image upload based on the type
+        if (uploadType === 'local') {
+        const imagePath = path.join(__dirname, './../public/uploads/', imageFile.name);
+        await imageFile.mv(imagePath); // Move file to the uploads directory
+
+        pageData.image = { src: `/uploads/${imageFile.name}` };
+        console.log("Local upload successful:", pageData.image);
+
+        } else if (uploadType === 'cloudinary') {
+        try {
+            const uploadResult = await cloudinary.uploader.upload(imageFile.tempFilePath, {
+            use_filename: true,
+            folder: 'page-images',
+            });
+
+            fs.unlinkSync(imageFile.tempFilePath);
+            pageData.image = {
+            src: uploadResult.secure_url,
+            public_id: uploadResult.public_id,
+            };
+            console.log("Cloudinary upload successful:", pageData.image);
+
+        } catch (error) {
+            console.error('Cloudinary upload error:', error);
+            return next(new AppError('Cloudinary upload failed', 500));
+        }
+        } else {
+        return next(new AppError('Invalid upload type', 400));
+        }
+    }
+
+    console.log("Page data before saving:", pageData);
+
+    // Save page to the database
+    const newPage = await Page.create(pageData);
+
+    res.status(201).json({
+        status: 'success',
+        data: {
+        newPage,
+        },
     });
-
+    });
     // Get all pages
     exports.getAllPages = catchAsync(async (req, res, next) => {
         const pages = await Page.find();
