@@ -1,7 +1,7 @@
 // Required Modules
 const express = require('express');
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config(); // Load environment variables from .env
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -11,12 +11,29 @@ const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const session = require('express-session');
+const fileUpload = require('express-fileupload');
 const passport = require('passport');
+const cloudinary = require('cloudinary').v2; // Import Cloudinary
 
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 // Custom Modules
 const globalErrorHandler = require('./Controller/errorController');
 const AppError = require('./utils/appError');
+
+// Initialize Express app
+const app = express();
+
+// Enable file uploads
+app.use(fileUpload({
+    useTempFiles: true,
+    tempFileDir: '/tmp/'  // Adjust as needed
+}));
 
 // Routes
 const authRoutes = require('./Routes/authRoutes');
@@ -29,8 +46,7 @@ const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml');
 
-// Initialize Express app
-const app = express();
+// Session and Passport Configuration
 app.use(session({
     secret: 'your_session_secret_OSS_Project', // Use a secure secret
     resave: false,
@@ -39,6 +55,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
 // Set security HTTP headers
 app.use(helmet());
 

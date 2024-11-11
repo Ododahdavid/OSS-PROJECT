@@ -22,17 +22,9 @@ const documentSchema = new mongoose.Schema({
         }
             
     ],
-    image:{
-        type:Object,
-        default:null,
-        properties:{
-            public_id:{
-                type:String
-            },
-            url:{
-                type:String
-            }
-        }
+    image: {
+        src: String,
+        public_id: String,
     },
     isDraft: {
         type: Boolean,

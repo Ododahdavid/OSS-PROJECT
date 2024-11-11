@@ -20,8 +20,10 @@
     },
     "peacock.color": "#42b883",
     "cSpell.ignoreWords": [
+        "cloudinary",
         "organisationName",
         "organisationUserName",
-        "resave"
+        "resave",
+        "uploadImageToCloudinary"
     ]
 }

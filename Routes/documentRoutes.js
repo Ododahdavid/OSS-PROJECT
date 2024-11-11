@@ -10,9 +10,8 @@ router
 .route('/')
 .get(docController.getAllDocuments)
 router.post(
-    '/documents',
-    authController.protect,
-    upload.single('image'), // Add middleware for single file upload with field name 'image'
+    '/',
+    authController.protect, // Protect the route with authentication
     docController.createDocument
 );
 
