@@ -1,15 +1,18 @@
 import React from 'react'
 import SideBar from '../components/dashboardComponents/SideBar'
-
+import Navbar from '../components/dashboardComponents/Navbar'
+import DocumentCreationSection from '../components/dashboardComponents/DocumentCreationSection'
 const DashBoardPage = () => {
-  
+
   return (
     <>
-        <section className={"dashboardContainer"}>
-            <SideBar/>
-        </section>
+      <Navbar />
+      <section className={"dashboardContainer"}>
+        <SideBar />
+        <DocumentCreationSection/>
+      </section>
 
-    
+
     </>
   )
 }

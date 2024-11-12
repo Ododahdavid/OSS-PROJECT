@@ -25,7 +25,8 @@ const LogInPage = () => {
 
     const submitLoginData = async (event) =>{
         event.preventDefault()
-
+        localStorage.removeItem("token")
+        localStorage.removeItem("user")
         setIsSubmitting(true)
         try{
 
@@ -48,6 +49,7 @@ const LogInPage = () => {
                       background: "rgb(144, 234, 96)",
                     },
                   });
+                  localStorage.setItem("token", JSON.stringify(result.token));
                   localStorage.setItem("user", JSON.stringify(result.data));
                   console.log(result.data)
                 setTimeout(() => {
